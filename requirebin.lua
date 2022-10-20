@@ -17,13 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>. --
 --]]
 
--- After require this file, you will able just write :
--- > bin = require 'binary'
--- And then call it :
--- > print(bin('argument 1', 'argument 2'))
--- And it will prints text output of this program + status boolean
---
--- returned after require function does the same, what popen does :)
+-- see more info in README.md :D
 
 local PATH = {} -- binaries pathes
 
@@ -34,15 +28,19 @@ for p in string.gmatch(os.getenv('PATH'), '([^:]*):?') do
 	PATH[#PATH + 1] = p 
 end
 
-local function elfloader(name)
-	return function(...)
+local function binloader(name, simple)
+	local f = function(...)
 		local f = io.popen(table.concat({
 			name, ...
 		}, ' '), 'r')
-		local s = f:read('a')
+		local s = f and f:read('a') or nil
 		local suc = f and f:close() or false
 		return s, suc
-	end, name
+	end
+	if not _ENV[simple] then
+		_ENV[simple] = f
+	end
+	return f, name
 end
 
 package.searchers[#package.searchers + 1] = function (name)
@@ -50,7 +48,7 @@ package.searchers[#package.searchers + 1] = function (name)
 		local f = io.open(v..delim..name)
 		if f then
 			f:close()
-			return elfloader, v..delim..name
+			return binloader, v..delim..name, name
 		end
 	end
 	return 'no executable file found!'
