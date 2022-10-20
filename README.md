@@ -3,7 +3,7 @@ A tiny lua library that allows you to include binary executables as functions, w
 
 # usage
 ```lua
-require "lua_requirebin"
+require "requirebin"
 pstree = require "pstree"
 print(pstree())
 ```   
@@ -15,3 +15,7 @@ print(ls('-l', '-d'))
 ```
 # use cases
 1. To replace shell scripts with lua scripts (lua can be compiled)
+
+# todo
+1. Check is it works on windows.     
+2. Adding a function to global variables if it is empty.
